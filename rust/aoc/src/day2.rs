@@ -10,39 +10,88 @@ fn load_input_text() -> io::Result<io::Lines<io::BufReader<File>>> {
 
 fn parse_password_requirements(
     pass_reqs:io::Result<io::Lines<io::BufReader<File>>>
-) -> () {
+) -> Vec<PasswordRequirements> {
+    let mut all_reqs: Vec<PasswordRequirements> = Vec::new();
     if let Ok(lines) = pass_reqs {
         for line in lines {
             if let Ok(reqs) = line {
-                let mut split = reqs.split(" ");
-                let allowed_range: Vec<u32 > = split.next()
-                                                .unwrap()
-                                                .split("-")
-                                                .map(|x| x.parse())
-                                                .map(|x| x.unwrap())
-                                                .collect();
-                let letter = split.next()
-                                    .unwrap()
-                                    .strip_suffix(":")
-                                    .unwrap();
-                let password = split.next().unwrap();
-                let pw = password_requirements_object {
-                    password:password.to_string(),
-                    allowed_range: allowed_range,
-                    letter:letter.to_string()
-                };
+                let req = convert_reqs_to_struct(reqs);
+                all_reqs.push(req)
             }        
         }        
     }
+    all_reqs
 }
 
-struct password_requirements_object {
+fn convert_reqs_to_struct(reqs: String) -> PasswordRequirements {
+    let mut split = reqs.split_whitespace();
+    let allowed_range: Vec<u32 > = split.next()
+                                    .unwrap()
+                                    .split("-")
+                                    .map(|x| x.parse())
+                                    .map(|x| x.unwrap())
+                                    .collect();
+    let letter = split.next()
+                        .unwrap()
+                        .strip_suffix(":")
+                        .unwrap();
+    let password = split.next().unwrap();
+    
+    PasswordRequirements {
+        password:password.to_string(),
+        allowed_range: allowed_range,
+        letter:letter.to_string()
+    }
+}
+
+#[derive(Debug, Clone)]
+struct PasswordRequirements {
     password: String,
     letter: String,
     allowed_range: Vec<u32>
 }
 
+impl PasswordRequirements {
+    fn check_password_requirements_count(self) -> bool {
+
+        let char_count = self.password
+                .chars()
+                .map(|l| l==self.letter.chars().next().unwrap())
+                .fold(0, |sum, x| {
+                    if x == true {
+                        sum + 1
+                    } else {
+                        sum
+                    }
+                });
+
+        if char_count >= self.allowed_range[0] && char_count <= self.allowed_range[1] {
+            return true;
+        }
+
+        return false;
+    }
+}
+
 pub fn solve() -> () {
     let i = load_input_text();
     let j = parse_password_requirements(i);
+    let mut sum = 0;
+    for c in j {
+        if c.check_password_requirements_count() == true {
+            sum = sum + 1
+        } else {
+            sum = sum
+        }
+    }
+    // let k = j.iter()
+    //             .map(|x| x.check_password_requirements_count())
+    //             .fold(0, |sum: u32, x: bool| {
+    //                 if x == true {
+    //                     sum + 1
+    //                 } else {
+    //                     sum
+    //                 }
+    //             });
+    println!("{}",sum)
 }
