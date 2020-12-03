@@ -1,10 +1,8 @@
 from typing import Generator, Tuple, List
 
-def load_input_text() -> Generator[str, None, None]:
-    with open("python/day2/day-2-input.txt") as f:
-        input = f.readlines()
-    for i in input:
-        yield i.strip()
+def load_input_text():
+    for row in open("python/day2/day-2-input.txt", "r"):
+        yield row.strip()
 
 
 def parse_password_requirements(pass_reqs: Generator[str, None, None]) -> Generator[Tuple[List[int], str, str], None, None]:
