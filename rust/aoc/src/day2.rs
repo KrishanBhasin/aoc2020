@@ -1,7 +1,5 @@
 use std::fs::File;
 use std::io::{self, BufRead};
-use std::path::Path;
-use std::any::type_name;
 
 fn load_input_text() -> io::Result<io::Lines<io::BufReader<File>>> {
     let file = File::open("day-2-input.txt")?;
@@ -44,7 +42,7 @@ fn convert_reqs_to_struct(reqs: String) -> PasswordRequirements {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 struct PasswordRequirements {
     password: String,
     letter: String,
@@ -68,8 +66,18 @@ impl PasswordRequirements {
         if char_count >= self.allowed_range[0] && char_count <= self.allowed_range[1] {
             return true;
         }
-
         return false;
+    }
+    fn check_password_requirements_position(self) -> bool {
+        let c1 = self.password.chars().nth((self.allowed_range[0]-1) as usize).unwrap();
+        let c2 = self.password.chars().nth((self.allowed_range[1]-1) as usize).unwrap();
+
+        if (c1==self.letter.chars().next().unwrap()) ^ (c2==self.letter.chars().next().unwrap()) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }
 
@@ -78,20 +86,11 @@ pub fn solve() -> () {
     let j = parse_password_requirements(i);
     let mut sum = 0;
     for c in j {
-        if c.check_password_requirements_count() == true {
+        if c.check_password_requirements_position() == true {
             sum = sum + 1
         } else {
             sum = sum
         }
     }
-    // let k = j.iter()
-    //             .map(|x| x.check_password_requirements_count())
-    //             .fold(0, |sum: u32, x: bool| {
-    //                 if x == true {
-    //                     sum + 1
-    //                 } else {
-    //                     sum
-    //                 }
-    //             });
     println!("{}",sum)
 }
