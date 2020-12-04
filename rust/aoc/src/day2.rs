@@ -81,7 +81,7 @@ impl PasswordRequirements {
     }
 }
 
-pub fn solve() -> () {
+pub fn solve() -> u32 {
     let i = load_input_text();
     let j = parse_password_requirements(i);
     let mut sum = 0;
@@ -92,5 +92,5 @@ pub fn solve() -> () {
             sum = sum
         }
     }
-    println!("{}",sum)
+    sum
 }
