@@ -27,7 +27,6 @@ class LocalGeology:
 
     def move(self):
         self.position = Point(self.position.x + self.movement.x, self.position.y + self.movement.y)
-        
         self.position.x = self.position.x % len(self.layout[0])
 
         return self
