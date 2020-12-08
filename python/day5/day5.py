@@ -35,10 +35,28 @@ def parse_boarding_pass_code(boarding_passes):
 def calculate_seat_id(r, c):
     return (r * 8) + c
 
-def find_missing_seats(r,c,sid):
+def find_missing_seats(remaining_seats, r_c_sid_generator):
+    for r, c, sid in r_c_sid_generator:
+        remaining_seats.remove(sid)
+
+    return remaining_seats
+
+def find_non_continuous_entry(remaining_seats):
+    for i in range(len(remaining_seats)):
+        if remaining_seats[i] != remaining_seats[i+1]-1:
+            if remaining_seats[i+1] != remaining_seats[i+2]-1:
+                return remaining_seats[i+1]
     
+
+
 
 if __name__ == "__main__":
     b = generate_single_boarding_pass()
     b = parse_boarding_pass_code(b)
-    print(max(b))
+
+    remaining_seats = list(range(128*8))
+    remaining_seats = find_missing_seats(remaining_seats, b)
+
+    my_seat = find_non_continuous_entry(remaining_seats)
+
+    print(my_seat)
