@@ -20,9 +20,14 @@ def generate_length_of_list(deduped_answers):
     for ans in deduped_answers:
         yield len(ans)
 
+def get_common_answers_from_block(block_of_answers):
+    for block in block_of_answers:
+        shared = set(block[0].strip()).intersection(*[b.strip() for b in block[1:]])
+        yield shared
+
 if __name__ == "__main__":
     b = generate_single_block()
-    b = deduplicate_block_letters(b)
+    b = get_common_answers_from_block(b)
     b = generate_length_of_list(b)
 
     print(sum(b))
