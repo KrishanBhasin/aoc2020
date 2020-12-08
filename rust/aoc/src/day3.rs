@@ -85,7 +85,6 @@ pub fn solve() -> u32 {
             sum += r.is_on_tree() as u32
         }
         movement_tree_sum.push(sum);
-        println!("Done {:?}! Sum is {}", choice, sum);
     }
 
     let total = movement_tree_sum.iter().fold(1, |acc,x| acc * x);
